@@ -25,5 +25,34 @@
         <a href="/google-login" class="google-btn">Sign in with Google</a> -->
         <p>Already have an account? <a href="/login">Login here</a></p>
     </div>
+    <script>
+        // Signup form submit handler
+const signupForm = document.getElementById("signupForm");
+
+signupForm.addEventListener("submit", function (e) {
+    e.preventDefault();
+    
+    const username = document.getElementById("username").value;
+    const email = document.getElementById("email").value;
+    const password = document.getElementById("password").value;
+
+    fetch("https://your-backend.onrender.com/signup", {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/x-www-form-urlencoded"
+        },
+        body: `username=${username}&email=${email}&password=${password}`,
+    })
+    .then(response => {
+        if (response.redirected) {
+            window.location.href = response.url;
+        }
+    })
+    .catch(error => console.error('Error:', error));
+});
+
+// Similar logic for the login form
+
+    </script>
 </body>
 </html>
