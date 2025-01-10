@@ -1,77 +1,41 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Signup Page</title>
-    <link rel="stylesheet" href="./styles.css">
-</head>
-<body>
-    <div class="container">
-        <h2>Signup</h2>
-        <form id="signupForm">
-            <label for="username">Username:</label>
-            <input type="text" id="username" name="username" required><br><br>
+document.getElementById("signupForm").addEventListener("submit", function(event) {
+    event.preventDefault(); // Prevent the default form submission
 
-            <label for="email">Email:</label>
-            <input type="email" id="email" name="email" required><br><br>
+    // Get form data
+    const username = document.getElementById("username").value;
+    const email = document.getElementById("email").value;
+    const password = document.getElementById("password").value;
 
-            <label for="password">Password:</label>
-            <input type="password" id="password" name="password" required><br><br>
+    // Create a payload with the form data
+    const data = new URLSearchParams();
+    data.append("username", username);
+    data.append("email", email);
+    data.append("password", password);
 
-            <button type="submit">Signup</button>
-        </form>
-        <!-- <p>OR</p>
-        <a href="/google-login" class="google-btn">Sign in with Google</a> -->
-        <p>Already have an account? <a href="/login">Login here</a></p>
-    </div>
-
-    <script>
-    // Event listener for form submission
-    document.getElementById("signupForm").addEventListener("submit", function(event) {
-        event.preventDefault(); // Prevent the default form submission
-
-        // Get form data
-        const username = document.getElementById("username").value;
-        const email = document.getElementById("email").value;
-        const password = document.getElementById("password").value;
-
-        // Create a payload with the form data
-        const data = new URLSearchParams();
-        data.append("username", username);
-        data.append("email", email);
-        data.append("password", password);
-
-        // Send data to the backend using fetch API
-        fetch("https://backend-tyb5.onrender.com/signup", {  // Replace this with your backend URL
-            method: "POST",
-            mode: "no-cors",
-            headers: {
-                "Content-Type": "application/x-www-form-urlencoded"
-            },
-            body: data
-        })
-        .then(response => {
-            if (response.redirected) {
-                // If signup is successful, the user will be redirected
-                window.location.href = response.url;
-            } else {
-                // If the response is not a redirect (meaning failed signup)
-                return response.text();
-            }
-        })
-        .then(text => {
-            if (text) {
-                // If there's a response message, display it
-                alert(text);
-            }
-        })
-        .catch(error => {
-            console.error("Error:", error);
-            alert("An error occurred. Please try again.");
-        });
+    // Send data to the backend using fetch API
+    fetch("https://backend-tyb5.onrender.com/signup", {
+        method: "POST",
+        mode: "cors",  // Ensure that CORS is enabled for communication
+        headers: {
+            "Content-Type": "application/x-www-form-urlencoded"
+        },
+        body: data
+    })
+    .then(response => {
+        if (response.ok) { // Check if the response status is OK
+            return response.json(); // Parse the JSON response
+        } else {
+            return Promise.reject("Signup failed"); // If the request failed, reject with an error
+        }
+    })
+    .then(data => {
+        // If signup is successful
+        alert(data.message || "Signup successful!");
+        // Optionally, redirect to another page
+        window.location.href = "/login"; // Change this if you need to redirect elsewhere
+    })
+    .catch(error => {
+        console.error("Error:", error);
+        alert("An error occurred. Please try again.");
     });
-</script>
-
-</body>
-</html>
+});
