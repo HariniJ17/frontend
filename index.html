@@ -9,7 +9,7 @@
 <body>
     <div class="container">
         <h2>Signup</h2>
-        <form action="/signup" method="POST">
+        <form id="signupForm">
             <label for="username">Username:</label>
             <input type="text" id="username" name="username" required><br><br>
 
@@ -25,34 +25,52 @@
         <a href="/google-login" class="google-btn">Sign in with Google</a> -->
         <p>Already have an account? <a href="/login">Login here</a></p>
     </div>
+
     <script>
-        // Signup form submit handler
-const signupForm = document.getElementById("signupForm");
+    // Event listener for form submission
+    document.getElementById("signupForm").addEventListener("submit", function(event) {
+        event.preventDefault(); // Prevent the default form submission
 
-signupForm.addEventListener("submit", function (e) {
-    e.preventDefault();
-    
-    const username = document.getElementById("username").value;
-    const email = document.getElementById("email").value;
-    const password = document.getElementById("password").value;
+        // Get form data
+        const username = document.getElementById("username").value;
+        const email = document.getElementById("email").value;
+        const password = document.getElementById("password").value;
 
-    fetch("https://your-backend.onrender.com/signup", {
-        method: "POST",
-        headers: {
-            "Content-Type": "application/x-www-form-urlencoded"
-        },
-        body: `username=${username}&email=${email}&password=${password}`,
-    })
-    .then(response => {
-        if (response.redirected) {
-            window.location.href = response.url;
-        }
-    })
-    .catch(error => console.error('Error:', error));
-});
+        // Create a payload with the form data
+        const data = new URLSearchParams();
+        data.append("username", username);
+        data.append("email", email);
+        data.append("password", password);
 
-// Similar logic for the login form
+        // Send data to the backend using fetch API
+        fetch("https://your-backend-url.com/signup", {  // Replace this with your backend URL
+            method: "POST",
+            headers: {
+                "Content-Type": "application/x-www-form-urlencoded"
+            },
+            body: data
+        })
+        .then(response => {
+            if (response.redirected) {
+                // If signup is successful, the user will be redirected
+                window.location.href = response.url;
+            } else {
+                // If the response is not a redirect (meaning failed signup)
+                return response.text();
+            }
+        })
+        .then(text => {
+            if (text) {
+                // If there's a response message, display it
+                alert(text);
+            }
+        })
+        .catch(error => {
+            console.error("Error:", error);
+            alert("An error occurred. Please try again.");
+        });
+    });
+</script>
 
-    </script>
 </body>
 </html>
