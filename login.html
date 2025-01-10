@@ -7,7 +7,7 @@
 </head>
 <body>
     <h2>Login</h2>
-    <form method="POST">
+    <form id="loginForm">
         <label for="username">Username:</label><br>
         <input type="text" id="username" name="username" required><br><br>
 
@@ -16,5 +16,43 @@
 
         <button type="submit">Login</button>
     </form>
+
+    <script>
+        // Event listener for form submission
+        document.getElementById("loginForm").addEventListener("submit", function(event) {
+            event.preventDefault(); // Prevent default form submission
+
+            // Get form data
+            const username = document.getElementById("username").value;
+            const password = document.getElementById("password").value;
+
+            // Create a payload with the form data
+            const data = new URLSearchParams();
+            data.append("username", username);
+            data.append("password", password);
+
+            // Send data to backend using fetch API
+            fetch("https://your-backend.onrender.com/login", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/x-www-form-urlencoded"
+                },
+                body: data
+            })
+            .then(response => {
+                if (response.redirected) {
+                    // If the login is successful, the user will be redirected
+                    window.location.href = response.url;
+                } else {
+                    // If the response is not a redirect (meaning failed login)
+                    alert("Invalid credentials, please try again.");
+                }
+            })
+            .catch(error => {
+                console.error("Error:", error);
+                alert("An error occurred. Please try again.");
+            });
+        });
+    </script>
 </body>
 </html>
