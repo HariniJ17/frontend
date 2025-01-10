@@ -1,6 +1,7 @@
 from flask import Flask, render_template, request, redirect, url_for
 import sqlite3
 from werkzeug.security import generate_password_hash, check_password_hash
+from flask_cors import CORS  # Import CORS
 
 app = Flask(__name__)  # Create the Flask app instance
 
